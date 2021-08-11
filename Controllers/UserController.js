@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 
 class UserController {
   constructor() { }
-
   async createAccount(req, res) {
     const { email, password } = req.body;
     try {
@@ -70,11 +69,9 @@ class UserController {
       }
       if (email) {
         const userExists = await UserService.findUserByEmail(email);
-        if (userExists) {
-          if (userExists._id !== user._id) {
-            const response = new Response(0, "Error in updating user", 101, "Email already registered", {});
-            return res.status(200).send(response);
-          }
+        if (userExists && !(userExists._id.equals(user._id))) {
+          const response = new Response(0, "Error in updating user", 101, "Email already registered", {});
+          return res.status(200).send(response);
         }
       }
       const updated = await UserService.saveUser(req.body, userId);
